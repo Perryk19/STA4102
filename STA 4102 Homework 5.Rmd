@@ -1,0 +1,253 @@
+---
+title: "STA 4102 Homework 5"
+author: "Kayla Perry"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Homework 5
+
+## Complete All of the Problems 
+
+Complete all of the problems below and enter your code within the supplied code block. If code is already included in the code block, this is for the setup of the problem. If the problem does not have a code component, write your response as a comment in the R code block.
+
+## Problem 1: One-Way ANOVA
+
+**Scenario**: A botanist is studying the effect of five different fertilizers (Fertilizer A, Fertilizer B, Fertilizer C, Fertilizer D, Fertilizer E) on plant growth. She randomly assigns plants to one of the five fertilizers and measures their growth in centimeters after 8 weeks.
+
+The data (in centimeters grown) for each fertilizer group is as follows:
+
+- **Fertilizer A**: 12, 15, 14, 16, 13
+- **Fertilizer B**: 10, 9, 11, 10, 12
+- **Fertilizer C**: 17, 19, 18, 16, 17
+- **Fertilizer D**: 14, 13, 12, 15, 14
+- **Fertilizer E**: 11, 13, 12, 10, 11
+
+**Task**:
+
+Use a One-Way ANOVA to determine if there is a significant difference in mean growth across the five fertilizers.
+
+```{R Problem 1, error = T}
+# Your codes here!
+growth <- data.frame(fertilizer = factor(c("A", "A", "A", "A", "A", "B", "B", "B", "B", "B", "C", "C", "C", "C", "C", "D", "D", "D", "D", "D", "E", "E", "E", "E", "E")), cm = c(12, 15, 14, 16, 13, 10, 9, 11, 10, 12, 17, 19, 18, 16, 17, 14, 13, 12, 15, 14, 11, 13, 12, 10, 11))
+anova <- aov(cm ~ fertilizer, data = growth)
+summary(anova)
+```
+
+**Questions:**
+
+1. What are the null and alternative hypotheses?  
+2. Based on the ANOVA result, is there a significant difference in growth across the five fertilizers?  
+3. What is the F-value and p-value?
+
+1. The Null Hypothesis is that all of the growth means are the same.
+The Alternative Hypothesis is that at least one of the growth means are the different.
+2. The P-value is well below the significance level of 0.05 so indicates that there is a significant difference in the growth across the fertilizers.
+3. F-value : 23.86
+P-value : 2.26e-07
+
+## Problem 2: Two-Way ANOVA
+
+**Scenario**: An educational researcher is interested in studying the effects of different study methods (Self-Study, Group Study) and exam difficulty levels (Easy, Moderate, Difficult) on students' test scores. The researcher collects scores from students across both study methods and difficulty levels.
+
+The test scores are as follows:
+
+- **Self-Study (Easy)**: 88, 90, 85, 87
+- **Self-Study (Moderate)**: 78, 80, 77, 76
+- **Self-Study (Difficult)**: 65, 68, 70, 67
+- **Group Study (Easy)**: 92, 95, 93, 90
+- **Group Study (Moderate)**: 82, 84, 83, 81
+- **Group Study (Difficult)**: 70, 72, 69, 71
+
+**Task:**
+
+Use a Two-Way ANOVA to analyze the effect of study method and exam difficulty on test scores.
+
+```{R Problem 2, error = T}
+# Your codes here!
+scores <- data.frame(
+  study = factor(c("Self", "Self", "Self", "Group", "Group", "Group", "Self", "Self", "Self", "Group", "Group", "Group", "Self", "Self", "Self", "Group", "Group", "Group", "Self", "Self", "Self", "Group", "Group", "Group")), 
+  difficulty = factor(c("Easy", "Moderate", "Difficult", "Easy", "Moderate", "Difficult", "Easy", "Moderate", "Difficult","Easy", "Moderate", "Difficult", "Easy", "Moderate", "Difficult", "Easy", "Moderate", "Difficult", "Easy", "Moderate", "Difficult", "Easy", "Moderate", "Difficult")), score = c(88, 78, 65, 92, 82, 70, 90, 80, 68, 95, 84, 72, 85, 77, 70, 93, 83, 69, 87, 76, 67, 90, 81, 71 ))
+anova <- aov(score ~ study * difficulty, data = scores)
+summary(anova)
+
+
+```
+
+**Questions:**
+
+1. What are the null and alternative hypotheses for study method, exam difficulty, and their interaction effect?
+
+2. Based on the ANOVA result, is there a significant effect of study method or exam difficulty on test scores?
+
+3. Is there a significant interaction effect between study method and exam difficulty?
+
+1. Study Method: The Null Hypothesis that the study method will have no effect on the scores
+The Alternative Hypothesis the study method will have an effect on the scores.
+Exam Difficulty: The Null Hypothesis is that exam difficulty will have no effect on scores.
+The Alternative Hypothesis is that the exam difficulty will have an effect on scores.
+Interaction effect: The Null Hypothesis is that the there will be no interaction between study method and exam difficulty.
+They Alternative Hypothesis is that there will be an interaction between the study method and exam difficulty.
+
+2.There is a significant effect of study method on exam scores seeing that the p-value is 1.66e-05 which is less than the significance level of 0.001. That means that we can reject the null hypothesis and there is evidence to support the alternative hypothesis that study method will have an effect on test scores.There is a significant effect of exam difficulty on exam scores as well seeing that the p-value is 3.20e-14 which is well below the significance level of 0.001. This means that we reject the null hypothesis that there is no effect on exam scores and there is sufficient evidence to conclude that the difficulty does affect scores.
+
+3.The p-value for the interaction is 0.491 which is greater than the significance level of 0.05 so the interaction between study method and exam difficulty is not statistically significant.This means that the effect of study methods on test scores does not depend on exam difficulty.
+
+
+
+## Problem 3: Chi-Square Test of Independence
+
+**Scenario:** A healthcare provider wants to examine if there is a relationship between **age group** (18-30, 31-50, Over 50) and **preferred type of medical consultation** (In-Person, Online, Phone). She surveys 90 patients, and the results are summarized in the contingency table below:
+
+| Age Group  | Online | In-Store | Phone |**Total**|
+|:----------:|:------:|:--------:|:-----:|:-------:|
+| Under 30   | 20     | 10       | 15    | 45      |
+| 30-50      | 10     | 15       | 10    | 35      |
+| Over 50    | 5      | 10       | 10    | 25      |
+| **Total**  | 35     | 35       | 35    | 105     |
+
+**Task:**
+
+Perform a Chi-Square Test of Independence to determine if there is a significant association between age group and preferred consultation type.
+
+```{R Problem 3, error = T}
+# Your codes here!
+observed <- matrix(c(20, 10, 15, 10, 15, 10, 5, 10, 10), nrow = 3, byrow = TRUE) 
+colnames(observed) <- c("Online", "In-Store", "Phone")
+rownames(observed) <- c("Under 30", "30-50", "Over 50")
+observed
+# Perform the Chi-Square Test of Independence
+chisq.test(observed)
+```
+
+**Questions:**
+
+1. What are the null and alternative hypotheses for the Chi-Square test?  
+2. Based on the p-value, is there a significant association between age group and preferred shopping method?  
+3. What is the Chi-Square statistic and degrees of freedom?
+
+1. The null hypothesis is that the variables are independent.
+The alternative hypothesis is that the variables are dependent.
+2. The p-value is 0.149 which is greater than the significance level of 0.05. This means that we fail to reject the null hypothesis so there is no significant association between the age group and preferred shopping method.
+3. The chi-squared statistic is 6.7619 and the degrees of freedom is 4.
+
+## Problem 4: Simple Linear Regression Analysis
+
+**Scenario**: An economist is analyzing the relationship between **years of education** and **annual income** (in thousands of dollars). She believes that higher levels of education may lead to higher income and wants to quantify this relationship. To test this, she collects data from a sample of 50 individuals, recording each person’s total years of education and their annual income.
+
+Please use the data `Education and Income Data.csv` to finish following tasks
+
+**Tasks:**
+
+1. **Estimate the Model:**
+
+```{R Problem 4-1, error = T}
+# Your codes here!
+library(readr)
+Education_and_Income_Data <- read_csv("C:/Users/kkperry/OneDrive - University of South Florida/STA4102/Education and Income Data.csv")
+model <- lm(income ~ education, data=Education_and_Income_Data)
+summary(model)
+```
+
+2. **Interpret the Model Output:**
+
+- Write down the estimated regression equation from the R output.
+
+- Interpret the coefficient for `education`. What does this suggest about the relationship between years of education and income?
+
+- From the p-values for the intercept and education, is there evidence of a significant relationship between education and income?
+
+
+2.Estimated regression equation : y =  -35.1718 + 5.5333x
+The coefficient for education is 5.5333 which means that with every year of education, the increase in income is 5.5333
+Both p-values are well below the significance level of 0.05 which suggests that there is a significant relationship between education and income.
+
+
+3. **Assess Model Fit:**
+
+- Look at the $R^2$ value. What does this indicate about the fit of the model? How much of the variation in income is explained by years of education?
+
+3.The R^2 value of 0.9819 indicates that the fit of the model is very good so its predictions will be very accurate. The R^2 is 0.9819 which means that about 98.19% of the variation in income can be explained by the years of education.
+
+4. **Examine Residuals:**
+
+- Plot the standard residuals versus the fitted values. Describe what you see.
+
+4. Majority of the plots are inside the outer red dotted lines meaning that the models prediction is very accurate.
+
+```{R Problem 4-2, error = T}
+# Your codes here!
+standardized_residuals = rstandard(model)
+plot(standardized_residuals, ylab = "Residual", pch = 16, ylim = c(-4,4))
+abline(h = 0, col = "red", lty = 2)
+abline(h = 2, col = "red", lty = 2)
+abline(h = -2, col = "red", lty = 2)
+```
+
+## Problem 5: Multiple Linear Regression Analysis
+
+**Scenario**: A real estate analyst wants to predict the sale price (in thousands of dollars) of houses based on several features: square footage, number of bedrooms, age of the house, and distance to the city center (in miles). The analyst collects data from a sample of 50 houses in a suburban area, recording each variable for each house.
+
+Please use the data `Sale Price.csv` to finish following tasks
+
+**Tasks:**
+
+1. **Estimate the Full Model:** Generate and inspect the model summary output in R.
+
+The p-values for all variables are statistically significant at different significance levels. The p-value for the whole model is < 2.2e-16 which is well below the significance level of 0.05 meaning that the overall model is statistically significant. The R^2 of 0.9413 means that the model is a good fit and about 94.13% of the variation in sale price can be explained by the model.
+```{R Problem 5-1, error = T}
+# Your codes here!
+library(readr)
+Sale_Prices <- read_csv("C:/Users/kkperry/OneDrive - University of South Florida/STA4102/Sale Price.csv")
+model_multi <- lm(sale_price ~ square_footage + bedrooms + age + distance_to_city , data=Sale_Prices)
+summary(model_multi)
+```
+
+2. **Multicollinearity Check:** Calculate the Variance Inflation Factor (VIF) for each predictor in the full model. Based on the output, does multicollinearity appear to be a concern?
+
+The square footage has a VIF of 5.642460 which indicates multicollinearity with other predictors. This would cause concen. Distance to city has a VIF that is a little less than 5 and would indicate moderate multicollinearity. This would not warrant too much concern because it is less than 5.
+Although the square footage has a hihg VIF, I would not omit it in a reduced model because the p-value shows that it is statistically significant. The bedrooms have a larger p-value and would be okay to omit although it has a low VIF.
+```{R Problem 5-2, error = T}
+# Your codes here!
+library(car)
+vif(model_multi)
+```
+
+3. **Model Simplification:**
+
+- Consider reducing the model by removing any non-significant variables (e.g., bedrooms) and re-run the regression with the reduced model.
+
+- Use an ANOVA test to compare the full model to the reduced model. Does the reduced model fit the data as well as the full model? Interpret the p-value from the ANOVA test to determine if the reduced model is a viable alternative.
+
+
+
+```{R Problem 5-3, error = T}
+# Your codes here!
+reduced_model_multi <- lm(sale_price ~ square_footage + age + distance_to_city , data=Sale_Prices)
+summary(reduced_model_multi)
+
+```
+```{r}
+anova(model_multi,reduced_model_multi)
+```
+The F-statistic is very low so that indicates minimal difference in model fit. The p-value for the anova comparison is 0.9359 which is above the significance level of 0.05 and means that the reduced model is as statistically as effective as the full model.
+
+
+4 **Interpret the Reduced Model Output:**
+
+- Write down the estimated regression equation from the R output for the reduced model.
+
+- Interpret each coefficient in the reduced model. What does each coefficient tell us about the relationship between the respective predictor and sale price?
+
+- From the p-values for each coefficient, which predictors appear to be statistically significant? What does this indicate about their impact on sale price?
+
+y = 138.6811 + 0.1209x_1 - 2.2497x_2 - 2.3411x_3
+
+As the square footage increases by 1, the sales price increases by 0.1209. As the age increases by 1,  the sales price decreases by 2.2497. As the distance to the city increases by 1, the sales price decreases by 2.3411.
+
+All of the predictors appear to be statistically significant with their respective significance levels. Out of all of the predictors, the distance to city appears to be the least significant because it has the highest p-value of 0.078507 and may have the least effect on the sales price.
+

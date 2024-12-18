@@ -1,0 +1,107 @@
+---
+title: "STA 4102 Spring 2024 Homework 1"
+author: "Kayla Perry"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Homework Instructions
+
+Below you will find the problems for STA 4102 homework 1. Please enter your code into the code blocks given and remember not to delete the three back ticks that open and close the code blocks. Don't forget R will not show the results for a command when an object is being defined. So you will need to show the object (or use print()). Once you are done, knit the document together and submit the document.
+
+# Problem 1
+
+Perform the following arithmetic operations and include the code and results in your report:
+a. Add two numbers (5 points)
+b. Subtract two numbers (5 points)
+c. Multiply two numbers (5 points)
+d. Divide two numbers (5 points)
+```{r problem_1, error=TRUE}
+#Your code here
+#a.
+3+2
+#b.
+5-2
+#c. 
+4*3
+#d.
+24/2
+
+```
+
+# Problem 2
+
+Create two vectors 'x = c(10, 5, 3.5, 2)' and 'y = c(2, 7, 1.5, 4)' and perform the following:
+a. Calculate the element-wise sum of the two vectors 'x' and 'y'. (5 points)
+b. Subtract vector 'y' from vector 'x' (5 points)
+c. Multiply the corresponding elements of 'x' and 'y' (element-wise multiplication). (5 points)
+d. Divide each element of vector 'x' by the corresponding element of vector 'y'.(5 points)
+f. Calculate the modulo (remainder) of each element in vector 'x' divided by the corresponding element in vector 'y'.(10 points)
+```{r problem_2, error=TRUE}
+#Your code here
+x <- c(10, 5, 3.5, 2)
+y <- c(2, 7, 1.5, 4)
+#a.
+x+y
+#b.
+y-x
+#c.
+x*y
+#d. 
+x/y
+#f.
+x%%y
+```
+
+# Problem 3
+
+You are tasked with performing a series of operations that involve logical vectors and comparison operators in R.
+a. Create a numeric vector 'x' with 5 elements of your choice.(2 points)
+b. Compare each element of 'x' to a threshold value (e.g., 5) using greater than (>) and less than (<) operators. Store the results in logical vectors.(10 points)
+c. Create two logical vectors 'L1' and 'L2', each with at least 5 elements, containing a mix of 'TRUE', 'FALSE', and 'NA' values. (3 points)
+d. Apply element-wise logical AND (&) and OR (|) operations between 'L1' and 'L2'.(5 points)
+e. Apply logical negation (!) to one of your logical vectors ('L1' and 'L2'). (5 points)
+```{r problem_3, error=TRUE}
+#Your code here
+#a.
+x <- c(2, 4, 12, 24, 22)
+#b.
+x>5
+#c.
+L1 <- c(TRUE, FALSE, NA, NA, FALSE)
+L2 <- c(FALSE, FALSE, TRUE, TRUE, NA)
+#d. 
+L1 | L2
+L1 & L2
+#e.
+!L1
+!L2
+```
+
+# Problem 4
+
+Identify the type of the following values using the typeof() function and report your results:
+a. A numeric value (5 points)
+b. A character string (5 points)
+c. A logical value (5 points)
+d. A complex number (5 points)
+e. An integer (5 points)
+
+Test each using 3.14, "Bananas", TRUE, 2 + 3i, 42L
+```{r problem_4, error=TRUE}
+#Your code here
+#a.
+typeof(3.14)
+#b.
+typeof("Bananas")
+#c.
+typeof(TRUE)
+#d.
+typeof(2+3i)
+#e.
+typeof(42L)
+```

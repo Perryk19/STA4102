@@ -1,0 +1,322 @@
+---
+title: "STA 4102 RESEARCH PROJECT REPORT "
+author: "Caitlyn Fincham, Kayla Perry, Nada Swelem"
+date: "2024-11-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Hypothesis (Questions):
+
+This project aims to identify and analyze the key factors that influence student performance in academic settings. By exploring variables such as study habits, attendance, and demographic factors, we seek to determine which elements most significantly contribute to higher or lower academic achievement.
+
+**Research Questions:**
+
+1. Which factors (e.g., study time, attendance, parental education) have the strongest correlation with student performance?
+2. Can we accurately predict a student’s performance based on their study habits, attendance, and demographic variables?
+3. Do demographic factors, such as socioeconomic status, impact academic outcomes independently of study habits?
+Hypotheses:
+
+**Hypothesis:**
+
+1.  Students who dedicate more time to studying will have significantly higher academic performance compared to those who spend less time studying.
+
+2. Attendance is positively correlated with academic performance, with students who attend classes regularly achieving higher scores.
+
+3. Socioeconomic factors, such as parental education level, are predictive of student performance, even when controlling study habits and attendance.
+
+## Variable Names:
+1. Hours_Studied: Number of hours the student studies per week.
+2. Attendance: Percentage of classes the student attended.
+3. Parental_Involvement: Level of parental involvement in the student’s academic life (e.g., Low, Medium, High).
+4. Access_to_Resources: Access level to educational resources (e.g., Low, Medium, High).
+5. Extracurricular_Activities: Indicates if the student participates in extracurricular activities (Yes or No).
+6. Sleep_Hours: Average number of hours the student sleeps per night.
+7. Previous_Scores: Score(s) achieved in prior assessments.
+8. Motivation_Level: Level of self-reported motivation towards studies (e.g., Low, Medium, High).
+9. Internet_Access: Indicates if the student has access to the internet (Yes or No).
+10. Tutoring_Sessions: Number of tutoring sessions attended.
+11. Family_Income: Income level of the student’s family (e.g., Low, Medium, High).
+12. Teacher_Quality: Quality rating of the student’s teachers (e.g., Low, Medium, High).
+13. School_Type: Type of school the student attends (e.g., Public, Private).
+14. Peer_Influence: Influence of peers on the student’s academic performance (e.g., Positive, Neutral, Negative).
+15. Physical_Activity: Weekly hours dedicated to physical activity.
+16. Learning_Disabilities: Indicates if the student has any learning disabilities (Yes or No).
+17. Parental_Education_Level: Highest education level achieved by the student’s parents (e.g., High School, College, Postgraduate).
+18. Distance_from_Home: Distance of the school from the student’s home (e.g., Near, Moderate, Far).
+19. Gender: Gender of the student (Male or Female).
+20. Exam_Score: The target variable representing the student’s exam score.
+
+## Sample Data:
+
+```{r}
+## Data Cleaning and Wrangling
+
+# Step 1: Import the Data
+# Load the data from the specified file path and examine its structure to understand variable types (spf = student performance factors)
+data <- read_csv("~/OneDrive - University of South Florida/STA4102/StudentPerformanceFactors.csv")
+
+
+# Check the structure of the data
+str(data)
+
+# Get a summary of the data to assess for potential issues, such as missing values or outliers
+summary(data)
+
+## Step 2: Identify and Handle Missing Values
+
+# Identify columns with missing values by counting NA entries in each column
+colSums(is.na(data))
+
+# Replace or impute missing values in numeric columns with the mean value of that column
+# This fills in gaps and reduces the impact of missing values on the analysis
+data$Hours_Studied[is.na(data$Hours_Studied)] <- mean(data$Hours_Studied, na.rm = TRUE)
+data$Attendance[is.na(data$Attendance)] <- mean(data$Attendance, na.rm = TRUE)
+
+# For categorical columns, replace NAs with the most frequent category (mode)
+# This function identifies the mode (most common value) in the column
+fill_mode <- function(x) {
+  ux <- unique(x[!is.na(x)])
+  ux[which.max(tabulate(match(x, ux)))]
+}
+# Apply the mode function to fill missing values in categorical columns
+data$Parental_Involvement[is.na(data$Parental_Involvement)] <- fill_mode(data$Parental_Involvement)
+data$Access_to_Resources[is.na(data$Access_to_Resources)] <- fill_mode(data$Access_to_Resources)
+
+## Step 3: Remove Duplicates
+
+# Check for any duplicate rows in the dataset and remove them
+# Duplicates could skew analysis results, so it's important to eliminate them
+data <- data[!duplicated(data), ]
+
+## Step 4: Standardize and Correct Inconsistencies
+
+# Convert categorical variables to factors for consistency and easier analysis later on
+data$Extracurricular_Activities <- as.factor(data$Extracurricular_Activities)
+data$Motivation_Level <- as.factor(data$Motivation_Level)
+data$Internet_Access <- as.factor(data$Internet_Access)
+data$Family_Income <- as.factor(data$Family_Income)
+data$Teacher_Quality <- as.factor(data$Teacher_Quality)
+data$School_Type <- as.factor(data$School_Type)
+data$Peer_Influence <- as.factor(data$Peer_Influence)
+data$Learning_Disabilities <- as.factor(data$Learning_Disabilities)
+data$Parental_Education_Level <- as.factor(data$Parental_Education_Level)
+data$Distance_from_Home <- as.factor(data$Distance_from_Home)
+data$Gender <- as.factor(data$Gender)
+
+## Step 5: Verify Data Consistency
+
+# Check for inconsistencies in categorical values, such as typos or variations in capitalization
+# This is especially useful for columns like 'Parental_Involvement' or 'Access_to_Resources' where entries should be consistent
+table(data$Parental_Involvement)
+table(data$Access_to_Resources)
+
+# Standardize text in categorical variables by converting to lowercase for consistency
+data$Parental_Involvement <- tolower(data$Parental_Involvement)
+data$Access_to_Resources <- tolower(data$Access_to_Resources)
+
+# Ensure that numeric columns like Attendance have values within logical bounds (e.g., 0 to 100 for percentage)
+# This step removes any entries where Attendance is outside the expected range
+data <- data[data$Attendance >= 0 & data$Attendance <= 100, ]
+
+# Re-check the summary of the cleaned dataset to confirm that issues have been addressed
+summary(data)
+
+# Display the first 5 rows in the data set to get a preview of the data
+head(data, 5)
+
+```
+ 
+## Exploratory Data Analysis (EDA):
+```{r}
+# Load necessary libraries
+library(ggplot2)
+
+# Step 1: Summary Statistics
+# Generate summary statistics to get a basic overview of the dataset
+summary(data)
+
+# Calculate additional statistics if needed (e.g., standard deviation, median) for numeric variables
+sapply(data[, sapply(data, is.numeric)], sd, na.rm = TRUE)  #Standard deviation
+
+```
+```{r}
+# Step 2: Visualizations
+
+# Histogram of Exam_Score to see the distribution of student performance
+ggplot(data, aes(x = Exam_Score)) +
+  geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
+  labs(title = "Distribution of Exam Scores", x = "Exam Score", y = "Frequency")
+
+```
+
+The histogram of exam scores directly relates to our research problem of identifying key factors that influence student performance. The concentration of scores within the 60-80 range suggests that while most students perform at a moderate level, few excel or struggle significantly. This pattern raises questions about the factors that differentiate students within this range—such as study habits, attendance, or socioeconomic background—and whether these elements could help move more students towards higher achievement.
+
+```{r}
+# Boxplot of Hours_Studied by Gender to see if study habits vary by gender
+ggplot(data, aes(x = Gender, y = Hours_Studied, fill = Gender)) +
+  geom_boxplot() +
+  labs(title = "Hours Studied by Gender", x = "Gender", y = "Hours Studied")
+
+
+```
+The boxplot of Hours Studied by Gender shows no substantial difference in study hours between male and female students, with similar medians and ranges. This suggests that gender may not significantly influence study time, aligning with the research project’s goal to determine key factors in academic performance.
+
+```{r}
+#Hypothesis 1: Hours Studied vs Exam Score
+# Scatterplot of Hours_Studied vs Exam_Score to explore the relationship between study time and performance
+ggplot(data, aes(x = Hours_Studied, y = Exam_Score)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Exam Score vs Hours Studied", x = "Hours Studied", y = "Exam Score")
+
+```
+The scatterplot of Hours Studied vs Exam Score shows a positive relationship, with exam scores generally increasing as study hours rise. The trend line indicates that students who dedicate more hours to studying tend to achieve higher exam scores, supporting the hypothesis that study time positively impacts academic performance. This aligns with the research objective of identifying influential factors on student outcomes, highlighting study hours as a significant variable.
+```{r}
+#Hypothesis 2: Attendance vs Exam Score
+
+ggplot(data, aes(x = Attendance, y = Exam_Score)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Attendance vs Exam Score", x = "Attendance", y = "Exam Score")
+
+```
+This plot illustrates a positive correlation between Exam Scores and Attendance, indicating that students who attend class more frequently tend to achieve higher exam scores. Our correlation matrix analysis revealed a correlation coefficient of 0.58 between Exam Scores and Attendance, suggesting a moderate positive relationship. This result implies that consistent class attendance is associated with improved exam performance. This result supports our second Hypothesis that Attendance is positively correlated with academic performance, with students who attend classes regularly achieving higher scores.
+
+```{r}
+#Hypothesis 3: Family Income vs Exam Score
+#Do demographic factors, such as socioeconomic status, impact academic outcomes independently of study habits
+
+anova_result <- aov(Exam_Score ~ Family_Income, data = data)
+summary(anova_result)
+TukeyHSD(anova_result)
+```
+Running an ANOVA test allows us to determine if there is a statistically significant difference in exam scores among the income groups. The p-value of 1.31e-13 is far below the significance level of 0.05, indicating a significant difference in exam scores across at least one of the income groups. To identify specifically which income groups differ, I conducted a post-hoc test using Tukey's HSD (Tukey's Honest Significant Difference). This post-hoc test compares each pair of income groups, and the resulting p-values are all well below 0.05. This suggests that exam scores differ significantly across all income levels, with each income group having an effect on exam scores.
+
+```{r}
+# Boxplot of Exam_Score by Motivation_Level to examine if motivation levels impact performance
+ggplot(data, aes(x = Family_Income, y = Exam_Score, fill = Family_Income)) +
+  geom_boxplot() +
+  labs(title = "Exam Score by Family Income", x = "Family Income", y = "Exam Score")
+```
+The boxplot of Family Income vs. Exam Score shows that the median, interquartile range, and overall spread of scores are quite similar across all income levels. This suggests that income alone may not be a key factor in determining students' exam scores, although it may have a modest effect.
+```{r}
+# Step 3: Additional Analysis - Checking Relationships or Patterns
+
+# Correlation matrix for numeric variables to find strong linear relationships
+cor_matrix <- cor(data[, sapply(data, is.numeric)], use = "complete.obs")
+print(cor_matrix)
+```
+The correlation matrix highlights key relationships impacting exam scores, particularly emphasizing the importance of Hours Studied and Attendance, which show moderate positive correlations (0.45 and 0.58, respectively) with exam scores. This finding aligns with our research hypothesis, indicating that consistent study habits and class attendance significantly contribute to academic performance. Previous Scores shows a weaker positive correlation (0.16), suggesting prior academic success has some influence but is less impactful than study time and attendance. Other variables, such as Sleep Hours, Tutoring Sessions, and Physical Activity, show negligible correlations, implying they may not play a significant role in exam outcomes. These insights affirm the focus on study habits and attendance as primary factors in academic success, guiding further analysis to understand these effects in more detail.
+
+## Statistical Analysis:
+```{r}
+# Regression Analysis
+
+# Multiple linear regression to assess the combined effect of Hours_Studied, Attendance, and Previous_Scores on Exam_Score
+model <- lm(Exam_Score ~ Hours_Studied + Attendance + Previous_Scores, data = data)
+summary(model)
+```
+The regression analysis shows that Hours Studied, Attendance, and Previous Scores are significant predictors of Exam Score, with p-values less than 2e-16 for each, indicating strong statistical significance. Each additional study hour per week is associated with a 0.29-point increase in exam score, and each percentage increase in attendance adds 0.20 points, underscoring the importance of study habits and attendance for academic success. Previous Scores also positively impact current performance, suggesting that prior achievement contributes to ongoing success. These findings align with the project’s goal to identify factors influencing student performance, highlighting study time and attendance as key drivers for improved outcomes.
+## Model Evaluation:
+
+# R-squared and Adjusted R-squared calculated seperately 
+```{r}
+r_squared <- summary(model)$r.squared
+adj_r_squared <- summary(model)$adj.r.squared
+cat("R-squared:", r_squared, "\n")
+cat("Adjusted R-squared:", adj_r_squared, "\n")
+```
+# R-squared of 0.572 means that about 57.2% of the variability in student exam scores #can be explained by the variables included in the model (i.e., Hours Studied, #Attendance, and Previous Scores).
+#This suggests that the model captures a moderate portion of the variance in student #performance. In the context of your project, this indicates that while study habits, #attendance, and prior performance are important factors, there are still other #significant factors influencing academic performance that are not captured by the #model.
+# Mean Squared Error (MSE)
+```{r}
+predicted_scores <- predict(model, data)
+mse <- mean((data$Exam_Score - predicted_scores)^2)
+cat("Mean Squared Error (MSE):", mse, "\n")
+```
+
+#MSE of 6.47 represents the average squared difference between the actual exam scores #and the predicted exam scores.An MSE of 6.47 implies that there’s still room for #improvement in the model's accuracy.
+
+## Different model with added variables  (dont think its important)
+#model_formula <- Exam_Score ~ Hours_Studied * Attendance + Previous_Scores + #Parental_Education_Level + Family_Income
+
+# Fit the model using linear regression 
+#model <- lm(model_formula, data = data)
+#summary(model)  
+
+
+# Residual Plots
+# Load necessary libraries
+```{r}
+library(ggplot2)
+```
+
+# Create a dataframe with model residuals and fitted values
+```{r}
+residuals_df <- data.frame(Fitted_Values = model$fitted.values,
+                           Residuals = resid(model))
+```
+
+# 1. Residuals vs Fitted Values plot
+```{r}
+ggplot(residuals_df, aes(x = Fitted_Values, y = Residuals)) +
+  geom_point(color = "blue") +
+  geom_hline(yintercept = 0, color = "red", size = 1) +
+  labs(title = "Residuals vs Fitted Values", x = "Fitted Values", y = "Residuals")
+```
+
+The fact that the residuals are gathered around the red line (horizontal line at zero) indicates that the model's predictions are relatively accurate for most data points.
+While the residuals are scattered above and below the zero line but appear evenly distributed suggests that there is no significant bias in the predictions. The model is not systematically under-predicting or over-predicting.
+
+# 2. Histogram of Residuals
+
+```{r}
+ggplot(residuals_df, aes(x = Residuals)) +
+  geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
+  labs(title = "Histogram of Residuals", x = "Residuals", y = "Frequency")
+```
+
+The bell-shaped nature of the histogram suggests that the residuals (the differences between the actual exam scores and the predicted scores) are approximately normally distributed. This is an indication that the errors in the model do not show a systematic pattern. In other words, the model's predictions are, on average, unbiased, and there isn't any significant trend that the model has failed to capture.
+We are investigating factors in this model such as study time, attendance, previous scores, and socioeconomic factors like family income. This normality in residuals supports the idea that the model is adequately accounting for the relationships between these factors and exam scores.
+
+## Step 2: Model Validation
+
+# Hold-out Validation
+```{r}
+set.seed(123)  # Ensure reproducibility
+train_indices <- sample(1:nrow(data), 0.7 * nrow(data))   ## 70% training 
+train_data <- data[train_indices, ]
+test_data <- data[-train_indices, ]
+```
+
+# Train the model on training data
+```{r}
+model_train <- lm(Exam_Score ~ Hours_Studied + Attendance + Previous_Scores, data = train_data)
+```
+
+# Predict on test data
+```{r}
+predicted_test <- predict(model_train, test_data)
+```
+
+# Calculate MSE on test data
+```{r}
+rsq_test <- cor(test_data$Exam_Score, predicted_test)^2
+mse_test <- mean((test_data$Exam_Score - predicted_test)^2)
+rmse_test <- sqrt(mse_test)
+cat("Test Set R-squared:", rsq_test, "\n")
+cat("Test Mean Squared Error (MSE):", mse_test, "\n")
+cat("Test Root Mean Squared Error (RMSE):", rmse_test, "\n")
+```
+
+MSE of 5.89 means that, on average, the predicted exam scores are off by approximately 2.43 points (the square root of MSE) from the actual exam scores.
+The R-squared value of 0.60 indicates that the model explains a significant portion of the variation in exam scores, meaning the predictors (study hours, attendance, and previous scores) are relatively strong in explaining student performance.
+
+## Conclusion and Reccomendations: 
+
+
+
+

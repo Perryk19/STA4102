@@ -1,0 +1,307 @@
+---
+title: "STA 4102 Homework 4"
+author: "Kayla Perry"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Homework 4
+
+## Complete All of the Problems 
+
+Complete all of the problems below and enter your code within the supplied code block. If code is already included in the code block, this is for the setup of the problem. If the problem does not have a code component, write your response as a comment in the R code block.
+
+### Problem 1: Confidence Interval for Mean (Sigma Known)
+
+**Question**: A study claims that the average height of adult men in a certain country is 175 cm with a population standard deviation of 10 cm. You collect a random sample of 40 men from the population, and the sample has a mean height of 173 cm. Construct a 95% confidence interval for the true mean height of adult men in the country.
+
+```{R Problem 1, error=TRUE}
+# Your codes here
+n <- 40
+mean_sample <- 175
+sigma <- 10
+z_value <- qnorm(0.975)
+ci_95_known_sigma <- mean_sample + c(-1, 1) * z_value *
+(sigma / sqrt(n))
+ci_95_known_sigma
+```
+
+### Problem 2: Confidence Interval for Mean (Sigma Unknown)
+
+**Question**: A group of researchers wants to estimate the average age at which people are diagnosed with diabetes. They sample 25 individuals diagnosed with diabetes and find an average age of 52 years with a sample standard deviation of 8 years. Construct a 99% confidence interval for the true average age of diagnosis.
+
+```{R Problem 2, error=TRUE}
+# Your codes here
+n <- 25
+mean_sample <- 52
+sd_sample <- 8
+t_value <- qt(0.995, df = n-1)
+ci_99_unknown_sigma <- mean_sample + c(-1, 1) * t_value *(sd_sample / sqrt(n))
+ci_99_unknown_sigma
+
+```
+
+
+### Problem 3: Confidence Interval for a Proportion
+
+**Question**: In a survey, 200 out of 500 respondents stated that they prefer shopping online rather than in physical stores. Construct a 90% confidence interval for the true proportion of people who prefer online shopping.
+
+```{R Problem 3, error=TRUE}
+# Your codes here
+prefer <- 200
+n <- 500
+p_hat <- prefer/n
+z_value <- qnorm(0.95)
+ci_90_proportion <- p_hat + c(-1, 1) * z_value *sqrt(p_hat * (1 - p_hat) / n)
+ci_90_proportion
+```
+
+### Problem 4: Confidence Interval for the Difference in Means
+
+**Question**: A medical researcher is comparing the effectiveness of two treatments for a particular disease. For Treatment A, a sample of 20 patients had an average recovery time of 10 days with a sample standard deviation of 2 days. For Treatment B, a sample of 25 patients had an average recovery time of 12 days with a sample standard deviation of 3 days. Construct a 95% confidence interval for the difference in mean recovery times between the two treatments.
+
+```{R Problem 4, error=TRUE}
+# Your codes here
+n1 <- 20
+n2 <- 25
+mean1 <- 10
+mean2 <- 12
+sd1 <- 2
+sd2<- 3
+t_value <- qt(0.975, df = n1 + n2 - 2)
+ci_diff_means <- (mean1 - mean2) + c(-1, 1) * t_value *sqrt((sd1^2 / n1) + (sd2^2 / n2))
+```
+
+### Problem 5: Confidence Interval for the Difference in Proportions
+
+**Question**: In a clinical trial, 100 out of 200 patients who received Drug A recovered from an illness, while 150 out of 300 patients who received Drug B recovered. Construct a 95% confidence interval for the difference in recovery proportions between Drug A and Drug B.
+
+```{R Problem 5, error=TRUE}
+# Your codes here
+n1 <- 200
+p1 <- 100
+n2 <- 300
+p2 <- 150
+p_hat1 <- p1/n1
+p_hat2 <- p2/n2
+z_value <- qnorm(0.975)
+ci_diff_proportions <- (p_hat1 - p_hat2) + c(-1, 1) *z_value * sqrt((p_hat1 * (1 - p_hat1) / n1) + (p_hat2 * (1- p_hat2) / n2))
+ci_diff_proportions
+```
+
+### Problem 6: One-Sample Z-Test
+
+**Question**: A manufacturer claims that the average lifetime of their batteries is 200 hours with the variance 100. A random sample of 50 batteries is tested, and the lifetime (in hours) of each battery is recorded below.
+
+`battery_lifetimes <- c(195, 192, 198, 203, 190, 189, 198, 201, 196, 202, 194, 193, 197, 196, 199, 188, 192, 190, 191, 195, 193, 200, 197, 194, 195, 191, 198, 200, 194, 193, 197, 201, 190, 193, 192, 195, 198, 189, 192, 196, 191, 194, 199, 193, 192, 195, 196, 198, 197, 192)`
+                      
+At a 0.05 significance level, test whether the true mean lifetime of the batteries is less than the manufacturer's claim.
+
+**Part a**: State the null and alternative hypotheses.
+
+**Part b**: Perform the one-sample z-test and calculate the z-statistic.
+
+**Part c**: Conclude whether to reject or fail to reject the null hypothesis.
+
+```{R Problem 6, error=TRUE}
+# Your codes here
+install.packages("BSDA")
+library(BSDA)
+battery_lifetimes <- c(195, 192, 198, 203, 190, 189, 198, 201, 196, 202, 194, 193, 197, 196, 199, 188, 192, 190, 191, 195, 193, 200, 197, 194, 195, 191, 198, 200, 194, 193, 197, 201, 190, 193, 192, 195, 198, 189, 192, 196, 191, 194, 199, 193, 192, 195, 196, 198, 197, 192)
+#a. Null hypothesis is the average lifetime of the manufacturers batteries is greater than or equal to 200 hours. The Alternative hypothesis is that the lifetime is less than 200 hours.
+#b.
+n <- 50
+mean <- mean(battery_lifetimes)
+sd <- sd(battery_lifetimes)
+sample_data <- rnorm(n = 50, mean = mean, sd = sd)
+z.test(x = battery_lifetimes, mu = 200, sigma.x = 10)
+
+#Since the p value of 0.0002942 is less than the significance value of 0.05, we reject the null hypothesis. We can conclude that lifetime of the batteries are less than 200 hours.
+```
+
+### Problem 7: One-Sample T-Test
+
+**Question**: The average weight of apples from a farm is said to be 150 grams. A random sample of 16 apples was weighed, and the weights (in grams) are recorded below.
+
+`apple_weights <- c(145, 148, 147, 149, 150, 151, 152, 146, 147, 149, 151, 148, 150, 146, 144, 147)`
+
+At the 0.01 significance level, test whether the true average weight of apples is different from 150 grams.
+
+**Part a**: Formulate the null and alternative hypotheses.
+
+**Part b**: Perform the one-sample t-test and calculate the test statistic.
+
+**Part c**: Based on the p-value, decide whether to reject or fail to reject the null hypothesis.
+
+```{R Problem 7, error=TRUE}
+# Your codes here
+apple_weights <- c(145, 148, 147, 149, 150, 151, 152, 146, 147, 149, 151, 148, 150, 146, 144, 147)
+#a. The Null Hypothesis is that the average weight of apples is 150 grams. The Alternative Hypothesis is that the average weight of apples is different from 150 grams.
+#b. 
+ t.test(apple_weights, mu = 150)
+ 
+#c. Based on the p-value of 0.005354 being less than the significance value of 0.01, we can reject the null hypothesis. 
+```
+
+### Problem 8: Two-Sample Z-Test for Means
+
+**Question**: A psychologist believes that the average stress levels between two groups of employees (Group A and Group B) are different. The stress levels (on a scale from 1 to 100) of 40 employees in Group A and 50 employees in Group B are recorded below.
+
+`group_A <- c(70, 68, 72, 75, 65, 67, 69, 70, 71, 68, 66, 72, 74, 67, 69, 70, 65, 68, 73, 71, 66, 69, 70, 72, 75, 66, 67, 71, 73, 70, 72, 74, 69, 70, 71, 68, 69, 73, 72, 70)`
+
+`group_B <- c(65, 64, 63, 67, 66, 65, 62, 68, 70, 63, 64, 65, 66, 67, 62, 65, 66, 67, 69, 68, 62, 63, 65, 66, 67, 68, 64, 63, 62, 69, 64, 65, 66, 68, 70, 67, 68, 65, 66, 69, 62, 63, 65, 67, 66, 68, 64, 65, 66)`
+
+Group A has a known population standard deviation of 10, and Group B has a known population standard deviation of 8. At the 0.05 significance level, test whether there is a significant difference in the average stress levels between the two groups.
+
+**Part a**: State the null and alternative hypotheses.
+
+**Part b**: Perform the two-sample z-test for means and calculate the test statistic.
+
+**Part c**: Conclude based on the test whether the average stress levels differ between the two groups.
+
+```{R Problem 8, error=TRUE}
+# Your codes here
+group_A <- c(70, 68, 72, 75, 65, 67, 69, 70, 71, 68, 66, 72, 74, 67, 69, 70, 65, 68, 73, 71, 66, 69, 70, 72, 75, 66, 67, 71, 73, 70, 72, 74, 69, 70, 71, 68, 69, 73, 72, 70)
+
+group_B <- c(65, 64, 63, 67, 66, 65, 62, 68, 70, 63, 64, 65, 66, 67, 62, 65, 66, 67, 69, 68, 62, 63, 65, 66, 67, 68, 64, 63, 62, 69, 64, 65, 66, 68, 70, 67, 68, 65, 66, 69, 62, 63, 65, 67, 66, 68, 64, 65, 66)
+#a. The Null Hypothesis is that there is no significant difference in the average stress levels between the two groups. The Alternative Hypothesis is that there is a significant difference in the average stress levels between the two groups. 
+
+#b. 
+z.test(x = group_A, y = group_A, sigma.x = 10, sigma.y =8)
+
+#c.The p-value of 1 is greater than the significance level so we fail to reject the null hypothesis. This means that the there is not enough evidence to support the alternative hypothesis stating that there is a significant difference int he average stress levels between the two groups. 
+```
+
+### Problem 9: Two-Sample T-Test for Means
+
+**Question**: A study is comparing the test scores of students from two different schools. The test scores for 20 students from School A and 22 students from School B are recorded below.
+
+`school_A <- c(85, 87, 83, 88, 82, 85, 86, 88, 84, 85, 87, 83, 84, 86, 87, 85, 84, 86, 83, 87)`
+
+`school_B <- c(80, 82, 79, 81, 78, 80, 83, 79, 82, 81, 79, 78, 80, 81, 82, 83, 78, 79, 80, 82, 81, 78)`
+
+At a 0.05 significance level, test whether there is a significant difference in the average test scores between the two schools.
+
+**Part a**: State the null and alternative hypotheses.
+
+**Part b**: Perform the two-sample t-test for means and compute the test statistic.
+
+**Part c**: Based on the results, conclude whether the average test scores between the two schools are significantly different.
+
+```{R Problem 9, error=TRUE}
+# Your codes here
+school_A <- c(85, 87, 83, 88, 82, 85, 86, 88, 84, 85, 87, 83, 84, 86, 87, 85, 84, 86, 83, 87)
+school_B <- c(80, 82, 79, 81, 78, 80, 83, 79, 82, 81, 79, 78, 80, 81, 82, 83, 78, 79, 80, 82, 81, 78)
+#a. The Null Hypothesis is that this is no significant difference between the two schools. The Alternative Hypothesis is that there is a significant difference in the average test scores between the two schools.
+
+#b. 
+t.test(school_A, school_B)
+
+#c.The p-value is significantly less than than the significance level of 0.05 so, we can reject the null hypothesis. There is enough evidence to support that there is a significant difference in the average test scores between the two schools.
+```
+
+### Problem 10: One Proportion Z-Test
+
+**Question**: In a recent poll, 550 of 1000 respondents said they would vote for Candidate A. A political analyst claims that more than 50% of the population supports Candidate A. At the 0.05 significance level, test the analyst's claim.
+
+**Part a**: Formulate the null and alternative hypotheses.
+
+**Part b**: Perform the one-proportion z-test and calculate the test statistic.
+
+**Part c**: Conclude whether to reject or fail to reject the null hypothesis.
+
+```{R Problem 10, error=TRUE}
+# Your codes here
+#a. The Null Hypothesis is that the population that supports Candidate A is equal to 50%. The Alternative hypothesis is that he population that supoports Candidate A is greater than 50%.
+
+#b. 
+prop.test(550, 1000, p = 0.50)
+
+#c. The p-value is less than the the significance level so we can rejec the null hypothesis. 
+```
+
+### Problem 11: Two Proportion Z-Test
+
+**Question**: In a health study, 120 of 400 patients who received Drug X reported side effects, while 125 of 500 patients who received Drug Y reported side effects. Test, at the 0.01 significance level, whether there is a significant difference in the proportions of side effects between the two drugs.
+
+**Part a**: Formulate the null and alternative hypotheses.
+
+**Part b**: Perform the two-proportion z-test and calculate the test statistic.
+
+**Part c**: Conclude based on the test whether there is a significant difference in the side effect proportions.
+
+```{R Problem 11, error=TRUE}
+# Your codes here
+#a. The Null Hypothesis is that there is no significant difference in the proportions of side affect between 2 jobs. The Alternative Hypothesis that there is a significant difference in the proportions of side affects between 2 jobs. 
+
+#b. 
+prop.test(c(120, 125), c(400, 500))
+
+#c. The p-value is larger than the significance level so we fail to reject the null hypothesis. There is not enough evidence to support that there is a significant difference in the proportions of side effects between the two drugs.  
+```
+
+### Problem 12: Chi-Square Test for One-Sample Variance
+
+**Question**: A factory claims that the variance of the diameter of its manufactured metal rods is 0.01 cm².  A sample of 25 rods is taken, and their diameters (in cm) are recorded below. 
+
+`rod_diameters <- c(2.01, 2.03, 2.05, 2.00, 1.99, 2.02, 2.03, 2.00, 2.01, 2.05, 2.03, 2.02, 2.01, 1.98, 2.00, 2.01, 2.02, 2.04, 2.00, 1.99, 2.03, 2.01, 2.02, 2.00, 1.99)`
+
+At the 0.05 significance level, test whether the population variance is different from the claimed variance.
+
+**Part a**: State the null and alternative hypotheses.
+
+**Part b**: Perform the chi-square test for one-sample variance and calculate the test statistic.
+
+**Part c**: Conclude whether to reject or fail to reject the null hypothesis.
+
+```{R Problem 12, error=TRUE}
+# Your codes here
+rod_diameters <- c(2.01, 2.03, 2.05, 2.00, 1.99, 2.02, 2.03, 2.00, 2.01, 2.05, 2.03, 2.02, 2.01, 1.98, 2.00, 2.01, 2.02, 2.04, 2.00, 1.99, 2.03, 2.01, 2.02, 2.00, 1.99)
+#a. The Null Hypothesis is that the population variance is the same as the claimed variance. The Alternative Hypothesis is that the population variance is different from the claimed variance. 
+
+n <- 25
+sample_variance <- var(rod_diameters)
+claimed_variance <- 0.01
+#b. I couldn't use the vartest for this like it is used in the notes.I looked up the error and it said that the var.test is only used for 2 samples.
+chi_squared_statistic <- (n - 1) * sample_variance / claimed_variance
+p_value <- 2 * pchisq(chi_squared_statistic, df = n - 1, lower.tail = FALSE)
+
+chi_squared_statistic
+p_value
+#c.The p-value is greater than the significance level so we fail to reject the null hypothesis. 
+```
+
+### Problem 13: Two-Sample Variance Test
+
+**Question**: A study is conducted to compare the variability in blood pressure between two groups of patients. The blood pressures of 30 patients from Group A and 35 patients from Group B are recorded below. 
+
+`group_A_bp <- c(120, 125, 122, 123, 124, 119, 121, 122, 124, 125, 120, 123, 124, 121, 122, 124, 119, 120, 123, 125, 120, 122, 121, 124, 125, 122, 121, 123, 119, 124)`
+
+`group_B_bp <- c(130, 135, 132, 133, 134, 129, 131, 132, 134, 135, 130, 133, 134, 131, 132, 134, 129, 130, 133, 135, 130, 132, 131, 134, 135, 132, 131, 133, 129, 134, 130, 133, 134, 131, 132)`
+
+At a 0.05 significance level, test whether the variances of the two groups are significantly different.
+
+**Part a**: State the null and alternative hypotheses.
+
+**Part b**: Perform the two-sample variance test and calculate the test statistic.
+
+**Part c**: Conclude whether to reject or fail to reject the null hypothesis.
+
+```{R Problem 13, error=TRUE}
+# Your codes here
+group_A_bp <- c(120, 125, 122, 123, 124, 119, 121, 122, 124, 125, 120, 123, 124, 121, 122, 124, 119, 120, 123, 125, 120, 122, 121, 124, 125, 122, 121, 123, 119, 124)
+
+group_B_bp <- c(130, 135, 132, 133, 134, 129, 131, 132, 134, 135, 130, 133, 134, 131, 132, 134, 129, 130, 133, 135, 130, 132, 131, 134, 135, 132, 131, 133, 129, 134, 130, 133, 134, 131, 132)
+#a. The Null Hypothesis is that the variances of the two groups are the same. The Alternative Hypothesis is that the variances of the two groups are significantly different. 
+
+#b. 
+var.test(group_A_bp, group_B_bp)
+
+#c. The p-value is greater than the significance level so we can fail to reject the null hypothesis.
+
+```
+

@@ -1,0 +1,902 @@
+---
+title: "STA 4102 Homework 3"
+author: "Kayla Perry"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Homework 3
+
+## Complete All of the Problems
+Complete all of the problems below and enter your code within the supplied code block. If code is already included in the code block, this is for the setup of the problem. If the problem does not have a code component, write your response as a comment in the R code block.
+
+### Problem 1
+You are provided with a dataset (`car_data.csv`) that contains information about cars, including their horsepower (`hp`), weight (`wt`), miles per gallon (`mpg`), and the number of cylinders (`cyl`). In addition to analyzing this dataset, simulate new data based on observed trends.
+
+1. **Data Loading**: Load the dataset from the file `car_data.csv` into R using `read.csv`, and visual the first five rows.
+
+2. **Data Simulation**: Simulate additional data for 100 cars based on the distributions of `hp`, `wt`, and `mpg` observed in the original dataset. Use normal distributions with mean and standard deviation computed from the dataset.
+
+3. **Data Visualization**: Create a scatter plot of `hp` vs `mpg` for both the original and simulated datasets. The size of the points should represent the car's weight (`wt`), and color should differentiate cars with 4, 6, and 8 cylinders.
+
+4. **Function Implementation**: Write a function `simulate_car_data` that generates the simulated data based on the statistics (mean and standard deviation) of the original dataset.
+
+5. **If/Else Logic**: Use an `if/else` statement within the function to print a warning if any simulated values for `hp` or `mpg` are negative.
+
+6. **Loop Implementation**: Use a loop to simulate 5 different sets of car data and compare their summary statistics (mean and standard deviation) with the original dataset.
+
+```{R Problem 1, error=TRUE}
+#Your codes here
+#1.
+library(readr)
+car_data <- read_csv("~/OneDrive - University of South Florida/STA4102/car_data.csv")
+head(car_data, 5)
+
+```
+
+
+```
+#2.
+mean_mpg <- mean(car_data$mpg, na.rm = TRUE)
+sd_mpg <- sd(car_data$mpg, na.rm = TRUE)
+simulate_mpg <- round(rnorm(100, mean = mean_mpg, sd = sd_mpg), 1)
+
+mean_hp <- mean(car_data$hp, na.rm = TRUE)
+sd_hp <- sd(car_data$hp, na.rm = TRUE)
+simulate_hp <- round(rnorm(100, mean = mean_hp, sd = sd_hp))
+
+mean_wt <- mean(car_data$wt, na.rm = TRUE)
+sd_wt <- sd(car_data$wt, na.rm = TRUE)
+simulate_wt <- round(rnorm(100, mean = mean_wt, sd = sd_wt), 3)
+
+mean_cyl <- mean(car_data$cyl, na.rm = TRUE)
+sd_cyl <- sd(car_data$cyl, na.rm = TRUE)
+simulate_cyl <- sample(c(4,6,8), size = 100, replace = TRUE)
+
+simulated_data <- data.frame(mpg = simulate_mpg,
+                             hp = simulate_hp,
+                             wt = simulate_wt,
+                             cyl = simulate_cyl)
+head(simulated_data)
+
+
+```
+```{r2}
+#3.hp` vs `mpg
+library(ggplot2)
+
+ggplot(car_data, aes(x = hp, y = mpg, color = cyl)) + geom_point(size = car_data$wt) + ggtitle("Miles per Gallon vs Horsepower, Colored by Cylinders")
+
+ggplot(simulated_data, aes(x = hp, y = mpg, color = cyl)) + geom_point(size = simulated_data$wt) + ggtitle("Miles per Gallon vs Horsepower, Colored by Cylinders")
+```
+```{r}
+#4.
+simulate_car_data <- function(df){
+  mean_mpg <- mean(df$mpg, na.rm = TRUE)
+  sd_mpg <- sd(df$mpg, na.rm = TRUE)
+  simulate_mpg <- round(rnorm(100, mean = mean_mpg, sd = sd_mpg), 1)
+  
+  mean_hp <- mean(df$hp, na.rm = TRUE)
+  sd_hp <- sd(df$hp, na.rm = TRUE)
+  simulate_hp <- round(rnorm(100, mean = mean_hp, sd = sd_hp))
+  
+  mean_wt <- mean(df$wt, na.rm = TRUE)
+  sd_wt <- sd(df$wt, na.rm = TRUE)
+  simulate_wt <- round(rnorm(100, mean = mean_wt, sd = sd_wt), 3)
+  
+  mean_cyl <- mean(df$cyl, na.rm = TRUE)
+  sd_cyl <- sd(df$cyl, na.rm = TRUE)
+  simulate_cyl <- sample(c(4,6,8), size = 100, replace = TRUE)
+  
+  simulated_data <- data.frame(mpg = simulate_mpg,
+                               hp = simulate_hp,
+                               wt = simulate_wt,
+                               cyl = simulate_cyl)
+  return(simulated_data)}
+```
+
+
+```{r}
+simulate_car_data(car_data)
+```
+```{r}
+#5.
+simulate_car_data <- function(df){
+  if (any(df$mpg<0 )){
+    print("Warning values for mpg are negative.")
+  }
+  if (any(df$hp<0)){
+    print("Warning values for hp or mpg are negative.")
+  }
+  mean_mpg <- mean(df$mpg, na.rm = TRUE)
+  sd_mpg <- sd(df$mpg, na.rm = TRUE)
+  simulate_mpg <- round(rnorm(100, mean = mean_mpg, sd = sd_mpg), 1)
+  
+  mean_hp <- mean(df$hp, na.rm = TRUE)
+  sd_hp <- sd(df$hp, na.rm = TRUE)
+  simulate_hp <- round(rnorm(100, mean = mean_hp, sd = sd_hp))
+  
+  mean_wt <- mean(df$wt, na.rm = TRUE)
+  sd_wt <- sd(df$wt, na.rm = TRUE)
+  simulate_wt <- round(rnorm(100, mean = mean_wt, sd = sd_wt), 3)
+  
+  mean_cyl <- mean(df$cyl, na.rm = TRUE)
+  sd_cyl <- sd(df$cyl, na.rm = TRUE)
+  simulate_cyl <- sample(c(4,6,8), size = 100, replace = TRUE)
+  
+  simulated_data <- data.frame(mpg = simulate_mpg,
+                               hp = simulate_hp,
+                               wt = simulate_wt,
+                               cyl = simulate_cyl)
+  return(simulated_data)}
+simulate_car_data(car_data)
+```
+```{r}
+#6.****
+simulate_car_data <- function(df){
+    if (any(df$mpg<0 )){
+      print("Warning values for mpg are negative.")
+    }
+    if (any(df$hp<0)){
+      print("Warning values for hp or mpg are negative.")
+    }
+    mean_mpg <- mean(df$mpg, na.rm = TRUE)
+    sd_mpg <- sd(df$mpg, na.rm = TRUE)
+    simulate_mpg <- round(rnorm(100, mean = mean_mpg, sd = sd_mpg), 1)
+    
+    mean_hp <- mean(df$hp, na.rm = TRUE)
+    sd_hp <- sd(df$hp, na.rm = TRUE)
+    simulate_hp <- round(rnorm(100, mean = mean_hp, sd = sd_hp))
+    
+    mean_wt <- mean(df$wt, na.rm = TRUE)
+    sd_wt <- sd(df$wt, na.rm = TRUE)
+    simulate_wt <- round(rnorm(100, mean = mean_wt, sd = sd_wt), 3)
+    
+    mean_cyl <- mean(df$cyl, na.rm = TRUE)
+    sd_cyl <- sd(df$cyl, na.rm = TRUE)
+    simulate_cyl <- sample(c(4,6,8), size = 100, replace = TRUE)
+    
+    simulated_data <- data.frame(mpg = simulate_mpg,
+                                 hp = simulate_hp,
+                                 wt = simulate_wt,
+                                 cyl = simulate_cyl)
+    return(simulated_data)}
+simulate_car_data(car_data)
+```
+
+### Problem 2
+You are provided with a dataset (`customer_purchase_data.csv`) that simulates whether 1000 customers made a purchase (1 = Purchase, 0 = No Purchase). Additionally, simulate the decisions for a future marketing campaign based on the current data.
+
+1. **Data Loading**: Load the dataset from the file `customer_purchase_data.csv` into R, and visual the first five rows.
+
+2. **Data Simulation**: Simulate the purchase decisions for 500 new customers, assuming the probability of purchase remains the same as observed in the original dataset (i.e., use the proportion of 1's from the original dataset).
+
+3. **Function with Conditional Logic**: Write a function `analyze_purchases` that takes the purchase decisions (both original and simulated) and returns the total number of purchases and the proportion of customers who made a purchase. *Note:* If the proportion of purchases is greater than 50%, return "Successful Campaign", otherwise return "Campaign Needs Improvement".
+
+4. **Loop Implementation**: Simulate the purchase decisions for 5 different regions (each with 500 customers) and store the total purchases for each region.
+
+5. **Data Visualization**: Create a bar plot of the total purchases for each region based on the simulations.
+
+```{R Problem 2, error=TRUE}
+#Your codes here
+#1.
+library(readr)
+customer_purchase_data <- read_csv("~/OneDrive - University of South Florida/STA4102/customer_purchase_data.csv")
+head(customer_purchase_data, 5)
+str(customer_purchase_data)
+```
+```{r}
+#2.
+num_ones <- sum(customer_purchase_data)
+num_ones
+
+prop_ones <- num_ones/1000
+prop_ones
+
+simulated_purchases <- rbinom(500, size = 1, prob = prop_ones)
+simulated_purchase <- data.frame(simulated_purchases)
+print(simulated_purchase)
+
+```
+```{r}
+#3.
+analyze_purchases <- function(customer_purchase_data, simulated_purchase){
+  
+  colnames(simulated_purchase) <- colnames(customer_purchase_data)
+  
+  combined_data <- rbind(customer_purchase_data, simulated_purchase)
+
+  num_rows <- nrow(combined_data)
+  num_purchases <- sum(combined_data)
+  
+  prop_purchases <- num_purchases / num_rows
+  
+  if(prop_purchases > 0.5){
+    result <- "Successful Campaign"
+  } else {
+    result <- "Campaign Needs Improvement"
+  }
+  
+  return(list("Total Purchases" = num_purchases, "Proportion" = prop_purchases, "Result" = result))
+}
+
+analyze_purchases(customer_purchase_data, simulated_purchase)
+
+```
+```{r}
+#4.
+set.seed(42)
+
+simulate_purchases <- function(num_customers) {
+  sample(c(0, 1), size = num_customers, replace = TRUE, prob = c(0.5, 0.5))
+}
+
+num_customers <- 500
+num_regions <- 5
+
+total_purchases <- numeric(num_regions)
+
+for (i in 1:num_regions) {
+  purchases <- simulate_purchases(num_customers)
+  
+  total_purchases[i] <- sum(purchases)
+  
+  cat("Total purchases for Region", i, ":", total_purchases[i], "\n")
+}
+
+
+```
+```{r}
+#5.
+region_names <- c("Region 1", "Region 2", "Region 3", "Region 4", "Region 5")
+
+# Create a bar plot of total purchases
+barplot(total_purchases,
+        names.arg = region_names,
+        main = "Total Purchases per Region",
+        xlab = "Regions",
+        ylab = "Total Purchases",
+        col = "turquoise")
+
+```
+
+
+### Problem 3
+You are given a dataset (`temperature_data.csv`) that contains simulated daily temperatures (in Fahrenheit) for 30 days. Your task is to simulate additional weather data based on the observed temperatures and categorize the days based on temperature.
+
+1. **Data Loading**: Load the dataset from the file `temperature_data.csv` into R, and visual the first five rows.
+
+2. **Data Simulation**: Simulate temperature data for the next 30 days based on the mean and standard deviation of the original 30 days of data.
+
+3. **Function Implementation**: Write a function `categorize_temperature` that takes a vector of temperatures (original and simulated) as input and categorizes each day as "Cold" (below 60°F), "Warm" (60°F–80°F), or "Hot" (above 80°F).
+
+4. **If/Else Logic**: Handle edge cases where temperatures are exactly 60°F or 80°F by categorizing them as "Warm".
+
+5. **Loop**: Use a `for` loop to count how many days in both the original and simulated data fall into each category.
+
+6. **Data Visualization**: Create a bar plot showing the number of "Cold", "Warm", and "Hot" days for both the original and simulated data.
+
+```{R Problem 3, error=TRUE}
+#Your codes here
+#1.
+library(readr)
+temperature_data <- read_csv("~/OneDrive - University of South Florida/STA4102/temperature_data.csv")
+head(temperature_data, 5)
+```
+```{r}
+#2. 
+mean_temp <- mean(temperature_data$Temperature, na.rm = TRUE)
+sd_temp <- sd(temperature_data$Temperature, na.rm = TRUE)
+simulate_temp <- round(rnorm(30, mean = mean_temp, sd = sd_temp), 1)
+
+simulated_temp <- data.frame(Simulated_Temperature = simulate_temp)
+head(simulated_temp)
+str(simulated_temp)
+```
+```{r}
+#3 & #4 
+categorize_temperature <- function(temperature_data, simulated_temp){
+  
+  temperature_data <- as.vector(unlist(temperature_data))
+  simulated_temp <- as.vector(unlist(simulated_temp))
+
+  combined_temps <- c(temperature_data, simulated_temp)
+  
+  categories <- ifelse(combined_temps < 60, "Cold",
+                ifelse(combined_temps >= 60 & combined_temps <= 80, "Warm", "Hot"))
+  
+  return(categories)
+}
+
+categorized_temperatures <- categorize_temperature(temperature_data, simulated_temp)
+
+print(categorized_temperatures)
+
+
+```
+```{r}
+#5. & #6.
+categorize_temperature <- function(temperature_data, simulated_temp){
+  
+  # Convert input data to vectors
+  temperature_data <- as.vector(unlist(temperature_data))
+  simulated_temp <- as.vector(unlist(simulated_temp))
+
+  # Combine temperature data
+  combined_temps <- c(temperature_data, simulated_temp)
+  
+  # Categorize temperatures
+  categories <- ifelse(combined_temps < 60, "Cold",
+                ifelse(combined_temps >= 60 & combined_temps <= 80, "Warm", "Hot"))
+  
+  # Count occurrences of each category
+  category_count <- table(categories)
+  
+  # Return the count of categories
+  return(category_count)
+}
+
+category_counts <- categorize_temperature(temperature_data, simulated_temp)
+
+print(category_counts)
+
+category_df <- as.data.frame(category_counts)
+colnames(category_df) <- c("Category", "Count")
+
+library(ggplot2)
+
+ggplot(category_df, aes(x = Category, y = Count, fill = Category)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("Cold" = "blue", "Warm" = "orange", "Hot" = "red")) +  # Set custom colors
+  labs(title = "Number of Cold, Warm, and Hot Temperatures", 
+       x = "Temperature Category", 
+       y = "Count") +
+  theme_minimal()
+```
+
+
+
+
+### Problem 4
+You are given a dataset (`insurance_claims_data.csv`) that contains the number of claims per customer and the total claim cost for 1000 customers. In addition to analyzing the given data, simulate additional claim data for new customers.
+
+1. **Data Loading**: Load the dataset from the file `insurance_claims_data.csv` into R, and visual the first five rows.
+
+2. **Data Simulation**: Simulate the number of claims and the total claim cost for 500 new customers. Assume the number of claims follows the same Poisson distribution and the claim amounts follow the same Gamma distribution as in the original data.
+
+3. **Function Implementation**: Write a function `simulate_claims` that generates new claim data (both number of claims and claim amounts) based on the original dataset’s statistics.
+
+4. **If/Else Logic**: Modify the function to print a warning if the total claims for any customer exceed $50,000.
+
+5. **Loop Implementation**: Simulate the total claim costs for the new customers and compare their statistics with those of the original dataset.
+
+6. **Data Visualization**: Create histograms for the total claim costs, comparing the original and simulated data.
+
+```{R Problem 4, error=TRUE}
+#Your codes here
+#1.
+library(readr)
+insurance_claims_data <- read_csv("~/OneDrive - University of South Florida/STA4102/insurance_claims_data.csv")
+head(insurance_claims_data, 5)
+```
+```{r}
+#2.Simulate the number of claims and the total claim cost for 500 new customers. Assume the number of claims follows the same Poisson distribution and the claim amounts follow the same Gamma distribution as in the original data.
+set.seed(42)
+
+mean_cost <- mean(insurance_claims_data$Total_Claim_Cost)
+variance_cost <- var(insurance_claims_data$Total_Claim_Cost)
+
+shape_estimate <- (mean_cost^2) / variance_cost
+scale_estimate <- variance_cost / mean_cost
+
+lambda_estimate <- mean(insurance_claims_data$Number_of_Claims)  # Poisson lambda
+new_number_of_claims <- rpois(500, lambda = lambda_estimate) 
+
+
+new_total_claim_cost <- rgamma(500, shape = shape_estimate, scale = scale_estimate)
+
+new_customers_data <- data.frame(
+  Customer_ID = 1001:1500,
+  Number_of_Claims = new_number_of_claims,
+  Total_Claim_Cost = new_total_claim_cost
+)
+
+head(new_customers_data)
+
+
+
+
+```
+```{r}
+#3. Write a function `simulate_claims` that generates new claim data (both number of claims and claim amounts) based on the original dataset’s statistics.
+
+simulate_claims <- function(insurance_claims_data, num_customers = 500) {
+ 
+  mean_cost <- mean(insurance_claims_data$Total_Claim_Cost)
+variance_cost <- var(insurance_claims_data$Total_Claim_Cost)
+
+shape_estimate <- (mean_cost^2) / variance_cost
+scale_estimate <- variance_cost / mean_cost
+
+lambda_estimate <- mean(insurance_claims_data$Number_of_Claims)  # Poisson lambda
+new_number_of_claims <- rpois(500, lambda = lambda_estimate) 
+
+
+new_total_claim_cost <- rgamma(500, shape = shape_estimate, scale = scale_estimate)
+
+new_customers_data <- data.frame(
+  Customer_ID = 1001:1500,
+  Number_of_Claims = new_number_of_claims,
+  Total_Claim_Cost = new_total_claim_cost
+)
+  
+  return(new_customers_data)
+}
+
+new_customers_data <- simulate_claims(insurance_claims_data)
+
+head(new_customers_data)
+
+
+```
+```{r}
+#4.
+simulate_claims <- function(insurance_claims_data, num_customers = 500) {
+ 
+  mean_cost <- mean(insurance_claims_data$Total_Claim_Cost)
+variance_cost <- var(insurance_claims_data$Total_Claim_Cost)
+
+shape_estimate <- (mean_cost^2) / variance_cost
+scale_estimate <- variance_cost / mean_cost
+
+lambda_estimate <- mean(insurance_claims_data$Number_of_Claims)  # Poisson lambda
+new_number_of_claims <- rpois(500, lambda = lambda_estimate) 
+
+
+new_total_claim_cost <- rgamma(500, shape = shape_estimate, scale = scale_estimate)
+
+new_customers_data <- data.frame(
+  Customer_ID = 1001:1500,
+  Number_of_Claims = new_number_of_claims,
+  Total_Claim_Cost = new_total_claim_cost
+)
+  exceeding_customers <- new_customers_data$Total_Claim_Cost > 50000
+  if (any(exceeding_customers)) {
+    warning("Total claim costs for some customers exceed $50,000!")
+    # Print the IDs of customers with high claims
+    high_claims_indices <- which(exceeding_customers)
+    print(paste("Customer IDs with claims over $50,000:", (1000 + high_claims_indices)))  # 
+  }
+  
+  return(new_customers_data)
+}
+
+new_customers_data <- simulate_claims(insurance_claims_data)
+
+head(new_customers_data)
+
+```
+```{r}
+#5. 
+
+new_customers_data <- simulate_claims(insurance_claims_data)
+
+print(head(new_customers_data))
+
+original_mean_claims <- mean(insurance_claims_data$Number_of_Claims)
+original_var_claims <- var(insurance_claims_data$Number_of_Claims)
+original_mean_cost <- mean(insurance_claims_data$Total_Claim_Cost)
+original_var_cost <- var(insurance_claims_data$Total_Claim_Cost)
+original_min_cost <- min(insurance_claims_data$Total_Claim_Cost)
+original_max_cost <- max(insurance_claims_data$Total_Claim_Cost)
+
+new_mean_claims <- mean(new_customers_data$Number_of_Claims)
+new_var_claims <- var(new_customers_data$Number_of_Claims)
+new_mean_cost <- mean(new_customers_data$Total_Claim_Cost)
+new_var_cost <- var(new_customers_data$Total_Claim_Cost)
+new_min_cost <- min(new_customers_data$Total_Claim_Cost)
+new_max_cost <- max(new_customers_data$Total_Claim_Cost)
+
+comparison_stats <- data.frame(
+  Statistic = c("Mean Claims", "Variance Claims", "Mean Cost", "Variance Cost", "Min Cost", "Max Cost"),
+  Original = c(original_mean_claims, original_var_claims, original_mean_cost, original_var_cost, original_min_cost, original_max_cost),
+  New = c(new_mean_claims, new_var_claims, new_mean_cost, new_var_cost, new_min_cost, new_max_cost)
+)
+
+print(comparison_stats)
+
+```
+```{r}
+#6.
+par(mfrow = c(1, 2))  # Set up the plotting area for 2 plots side by side
+
+# Histogram for original dataset
+hist(insurance_claims_data$Total_Claim_Cost, 
+     main = "Histogram of Total Claim Costs (Original Data)", 
+     xlab = "Total Claim Cost", 
+     col = "lightblue")
+
+# Histogram for simulated dataset
+hist(new_customers_data$Total_Claim_Cost, 
+     main = "Histogram of Total Claim Costs (Simulated Data)", 
+     xlab = "Total Claim Cost", 
+     col = "lightgreen")
+
+# Reset plotting area
+par(mfrow = c(1, 1))
+```
+
+
+### Problem 5
+You are provided with a dataset (`loan_data.csv`) that contains loan details for 50 customers, including the loan amount, interest rate, and loan term. In addition to analyzing the given data, simulate future loan data for new customers.
+
+1. **Data Loading**: Load the dataset from the file `loan_data.csv` into R, and visual the first five rows.
+
+2. **Data Simulation**: Simulate loan data (loan amount, interest rate, and term) for 100 new customers, using normal distributions for loan amounts, interest rates, and term lengths based on the original dataset.
+
+3. **Function Implementation**: Write a function `calculate_payment` that calculates the monthly payment based on the loan amount, interest rate, and loan term.
+
+4. **If/Else Logic**: Inside the function, check if the interest rate is greater than 0. If not, print a message stating that the loan must have a positive interest rate.
+
+5. **Loop Implementation**: Use a loop to calculate the monthly payments for both the original and simulated loan data.
+
+6. **Data Visualization**: Create a boxplot to visualize the distribution of monthly payments across the original and simulated customers.
+
+```{R Problem 5, error=TRUE}
+#Your codes here
+#1.
+library(readr)
+loan_data <- read_csv("~/OneDrive - University of South Florida/STA4102/loan_data.csv")
+head(loan_data, 5)
+str(loan_data)
+```
+```{r}
+#2.
+
+mean_loan_amount <- mean(loan_data$Loan_Amount)
+sd_loan_amount <- sd(loan_data$Loan_Amount)
+
+mean_interest_rate <- mean(loan_data$Interest_Rate)
+sd_interest_rate <- sd(loan_data$Interest_Rate)
+
+mean_loan_term <- mean(loan_data$Loan_Term_Years)
+sd_loan_term <- sd(loan_data$Loan_Term_Years)
+
+set.seed(42) 
+simulated_loan_data <- data.frame(
+  Customer_ID = 51:150,
+  Loan_Amount = rnorm(100, mean = mean_loan_amount, sd = sd_loan_amount),
+  Interest_Rate = rnorm(100, mean = mean_interest_rate, sd = sd_interest_rate),
+  Loan_Term_Years = round(rnorm(100, mean = mean_loan_term, sd = sd_loan_term))
+)
+
+# View the first few rows of the simulated data
+head(simulated_loan_data)
+
+```
+```{r}
+#3.
+calculate_payment <- function(loan_amount, annual_interest_rate, loan_term_years) {
+  monthly_interest_rate <- annual_interest_rate / 12
+  total_payments <- loan_term_years * 12
+ 
+  monthly_payment <- loan_amount * (monthly_interest_rate * (1 + monthly_interest_rate)^total_payments) / 
+                     ((1 + monthly_interest_rate)^total_payments - 1)
+  
+  return(monthly_payment)
+}
+
+simulated_loan_data$Monthly_Payment <- mapply(calculate_payment, 
+                                                simulated_loan_data$Loan_Amount, 
+                                                simulated_loan_data$Interest_Rate, 
+                                                simulated_loan_data$Loan_Term_Years)
+
+head(simulated_loan_data)
+
+```
+```{r}
+#4.
+calculate_payment <- function(loan_amount, annual_interest_rate, loan_term_years) {
+
+  if (annual_interest_rate <= 0) {
+    message("The loan must have a positive interest rate.")
+    return(NA)
+  }
+  
+  monthly_interest_rate <- annual_interest_rate / 12
+  total_payments <- loan_term_years * 12
+ 
+  monthly_payment <- loan_amount * (monthly_interest_rate * (1 + monthly_interest_rate)^total_payments) / 
+                     ((1 + monthly_interest_rate)^total_payments - 1)
+  
+  return(monthly_payment)
+}
+
+simulated_loan_data$Monthly_Payment <- mapply(calculate_payment, 
+                                                simulated_loan_data$Loan_Amount, 
+                                                simulated_loan_data$Interest_Rate, 
+                                                simulated_loan_data$Loan_Term_Years)
+
+head(simulated_loan_data)
+
+```
+```{r}
+#5.
+loan_data$Monthly_Payment <- NA 
+for (i in 1:nrow(loan_data)) {
+  loan_data$Monthly_Payment[i] <- calculate_payment(loan_data$Loan_Amount[i], 
+                                                    loan_data$Interest_Rate[i], 
+                                                    loan_data$Loan_Term_Years[i])
+}
+
+mean_loan_amount <- mean(loan_data$Loan_Amount)
+sd_loan_amount <- sd(loan_data$Loan_Amount)
+
+mean_interest_rate <- mean(loan_data$Interest_Rate)
+sd_interest_rate <- sd(loan_data$Interest_Rate)
+
+mean_loan_term <- mean(loan_data$Loan_Term_Years)
+sd_loan_term <- sd(loan_data$Loan_Term_Years)
+
+set.seed(42) 
+
+simulated_loan_data$Monthly_Payment <- NA  
+for (i in 1:nrow(simulated_loan_data)) {
+  simulated_loan_data$Monthly_Payment[i] <- calculate_payment(simulated_loan_data$Loan_Amount[i], 
+                                                                simulated_loan_data$Interest_Rate[i], 
+                                                                simulated_loan_data$Loan_Term_Years[i])
+}
+
+head(loan_data)
+head(simulated_loan_data)
+
+```
+```{r}
+#6.
+loan_data$Type <- "Original"
+simulated_loan_data$Type <- "Simulated"
+
+combined_data <- rbind(loan_data[, c("Monthly_Payment", "Type")], 
+                        simulated_loan_data[, c("Monthly_Payment", "Type")])
+
+ggplot(combined_data, aes(x = Type, y = Monthly_Payment)) +
+  geom_boxplot(fill = c("lightblue", "lightgreen")) +
+  labs(title = "Distribution of Monthly Payments",
+       x = "Customer Type",
+       y = "Monthly Payment ($)") +
+  theme_minimal()
+```
+
+
+### Problem 6
+You are provided with a dataset (`sales_forecasting_data.csv`) that contains simulated sales data for the next 12 months, including base sales, the effect of marketing campaigns, and the adjusted sales values. In addition to analyzing the provided data, simulate sales data under different marketing conditions.
+
+1. **Data Loading**: Load the dataset from the file `sales_forecasting_data.csv` into R, and visual the first five rows.
+
+2. **Data Simulation**: Simulate base sales for the next 12 months using a normal distribution, with the same mean and standard deviation as the original base sales data. Simulate the marketing campaign's effect for 5 different campaigns (use a loop to simulate different effects).
+
+3. **Function Implementation**: Write a function `simulate_sales` that adjusts the base sales based on the marketing campaign's effect (boost or reduce sales by 10%).
+
+4. **Loop Implementation**: Simulate the monthly sales for 5 different campaigns and calculate the average sales for each campaign.
+
+5. **Data Visualization**: Plot the average monthly sales over time for each of the 5 simulated campaigns, and add error bars to show the variability across simulations.
+
+```{R Problem 6, error=TRUE}
+#Your codes here
+#1.
+library(readr)
+sales_forecasting_data <- read_csv("~/OneDrive - University of South Florida/STA4102/sales_forecasting_data.csv")
+head(sales_forecasting_data, 5)
+```
+```{r}
+#2.
+mean_base_sales <- mean(sales_forecasting_data$Base_Sales)
+sd_base_sales <- sd(sales_forecasting_data$Base_Sales)
+
+set.seed(42)
+
+new_months <- 6:17
+simulated_base_sales <- rnorm(12, mean = mean_base_sales, sd = sd_base_sales)
+
+simulated_sales_data <- data.frame(
+  Month = new_months,
+  Base_Sales = simulated_base_sales,
+  Marketing_Effect = NA,
+  Adjusted_Sales = NA   
+)
+
+for (campaign in 1:5) {
+  marketing_effect <- runif(12, min = -0.2, max = 0.2)  # Random marketing effect between -0.2 and 0.2
+  simulated_sales_data$Marketing_Effect <- marketing_effect
+  simulated_sales_data$Adjusted_Sales <- simulated_sales_data$Base_Sales * (1 + simulated_sales_data$Marketing_Effect)
+
+  cat("Campaign", campaign, "\n")
+  print(simulated_sales_data)
+  cat("\n")
+}
+
+```
+```{r}
+#3.
+simulate_sales <- function(base_sales, marketing_effect) {
+  if (marketing_effect > 0) {
+    adjusted_sales <- base_sales * (1 + 0.10)
+  } else {
+    adjusted_sales <- base_sales * (1 - 0.10)
+  }
+  return(adjusted_sales)
+}
+
+for (i in 1:nrow(sales_forecasting_data)) {
+  sales_forecasting_data$Adjusted_Sales[i] <- simulate_sales(sales_forecasting_data$Base_Sales[i], 
+                                                               sales_forecasting_data$Marketing_Effect[i])
+}
+
+print(sales_forecasting_data)
+
+mean_base_sales <- mean(sales_forecasting_data$Base_Sales)
+sd_base_sales <- sd(sales_forecasting_data$Base_Sales)
+
+set.seed(42)
+
+new_months <- 6:17  
+simulated_base_sales <- rnorm(12, mean = mean_base_sales, sd = sd_base_sales)
+
+simulated_sales_data <- data.frame(
+  Month = new_months,
+  Base_Sales = simulated_base_sales,
+  Marketing_Effect = NA, 
+  Adjusted_Sales = NA     
+)
+
+for (campaign in 1:5) {
+  marketing_effect <- runif(12, min = -0.2, max = 0.2)  
+  simulated_sales_data$Marketing_Effect <- marketing_effect
+  
+  for (i in 1:nrow(simulated_sales_data)) {
+    simulated_sales_data$Adjusted_Sales[i] <- simulate_sales(simulated_sales_data$Base_Sales[i], 
+                                                               simulated_sales_data$Marketing_Effect[i])
+  }
+
+  cat("Campaign", campaign, "\n")
+  print(simulated_sales_data)
+  cat("\n")
+}
+
+```
+```{r}
+#4.
+
+simulate_sales <- function(base_sales, marketing_effect) {
+  if (marketing_effect > 0) {
+    adjusted_sales <- base_sales * (1 + 0.10)
+  } else {
+    adjusted_sales <- base_sales * (1 - 0.10)
+  }
+  return(adjusted_sales)
+}
+
+for (i in 1:nrow(sales_forecasting_data)) {
+  sales_forecasting_data$Adjusted_Sales[i] <- simulate_sales(sales_forecasting_data$Base_Sales[i], 
+                                                               sales_forecasting_data$Marketing_Effect[i])
+}
+
+print("Original Sales Data with Adjusted Sales:")
+print(sales_forecasting_data)
+
+mean_base_sales <- mean(sales_forecasting_data$Base_Sales)
+sd_base_sales <- sd(sales_forecasting_data$Base_Sales)
+
+
+set.seed(42)
+
+new_months <- 6:17
+simulated_base_sales <- rnorm(12, mean = mean_base_sales, sd = sd_base_sales)
+
+simulated_sales_data <- data.frame(
+  Month = new_months,
+  Base_Sales = simulated_base_sales,
+  Marketing_Effect = NA,  
+  Adjusted_Sales = NA     
+)
+
+average_sales_per_campaign <- numeric(5)
+
+for (campaign in 1:5) {
+  marketing_effect <- runif(12, min = -0.1, max = 0.1)  
+  simulated_sales_data$Marketing_Effect <- marketing_effect
+  
+  for (i in 1:nrow(simulated_sales_data)) {
+    simulated_sales_data$Adjusted_Sales[i] <- simulate_sales(simulated_sales_data$Base_Sales[i], 
+                                                               simulated_sales_data$Marketing_Effect[i])
+  }
+
+  average_sales_per_campaign[campaign] <- mean(simulated_sales_data$Adjusted_Sales, na.rm = TRUE)
+
+  cat("Campaign", campaign, "\n")
+  print(simulated_sales_data)
+  cat("Average Adjusted Sales:", average_sales_per_campaign[campaign], "\n\n")
+}
+
+cat("Average Sales for Each Campaign:\n")
+for (i in 1:5) {
+  cat("Campaign", i, ":", average_sales_per_campaign[i], "\n")
+}
+
+```
+```{r}
+#5.
+library(ggplot2)
+
+simulate_sales <- function(base_sales, marketing_effect) {
+  if (marketing_effect > 0) {
+
+    adjusted_sales <- base_sales * (1 + 0.10)
+  } else {
+ 
+    adjusted_sales <- base_sales * (1 - 0.10)
+  }
+  return(adjusted_sales)
+}
+
+for (i in 1:nrow(sales_forecasting_data)) {
+  sales_forecasting_data$Adjusted_Sales[i] <- simulate_sales(sales_forecasting_data$Base_Sales[i], 
+                                                               sales_forecasting_data$Marketing_Effect[i])
+}
+
+print("Original Sales Data with Adjusted Sales:")
+print(sales_forecasting_data)
+
+mean_base_sales <- mean(sales_forecasting_data$Base_Sales)
+sd_base_sales <- sd(sales_forecasting_data$Base_Sales)
+
+
+set.seed(42)
+
+new_months <- 6:17 
+simulated_base_sales <- rnorm(12, mean = mean_base_sales, sd = sd_base_sales)
+
+simulated_sales_data <- data.frame(
+  Month = new_months,
+  Base_Sales = simulated_base_sales,
+  Marketing_Effect = NA,  
+  Adjusted_Sales = NA      
+)
+
+sales_data_list <- vector("list", 5)
+
+for (campaign in 1:5) {
+  marketing_effect <- runif(12, min = -0.1, max = 0.1)  
+  simulated_sales_data$Marketing_Effect <- marketing_effect
+
+  for (i in 1:nrow(simulated_sales_data)) {
+    simulated_sales_data$Adjusted_Sales[i] <- simulate_sales(simulated_sales_data$Base_Sales[i], 
+                                                               simulated_sales_data$Marketing_Effect[i])
+  }
+
+  sales_data_list[[campaign]] <- simulated_sales_data$Adjusted_Sales
+}
+
+sales_data_df <- do.call(cbind, sales_data_list)
+colnames(sales_data_df) <- paste("Campaign", 1:5)
+
+average_sales <- rowMeans(sales_data_df, na.rm = TRUE)
+sd_sales <- apply(sales_data_df, 1, sd)
+
+plot_data <- data.frame(Month = new_months, Average_Sales = average_sales, SD_Sales = sd_sales)
+
+ggplot(plot_data, aes(x = Month, y = Average_Sales)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "blue", size = 2) +
+  geom_errorbar(aes(ymin = Average_Sales - SD_Sales, ymax = Average_Sales + SD_Sales), 
+                width = 0.2, color = "red") +
+  labs(title = "Average Monthly Sales with Variability Across Campaigns",
+       x = "Month",
+       y = "Average Sales") +
+  theme_minimal()
+
+```
